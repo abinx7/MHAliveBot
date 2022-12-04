@@ -313,17 +313,7 @@ async def settings(client, message):
                     '✅ Yes' if settings["file_secure"] else '❌ No',
                     callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',
                 ),
-            ],
-            [
-                InlineKeyboardButton(
-                    'IMDB',
-                    callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',
-                ),
-                InlineKeyboardButton(
-                    '✅ Yes' if settings["imdb"] else '❌ No',
-                    callback_data=f'setgs#imdb#{settings["imdb"]}#{grp_id}',
-                ),
-            ],
+            ],            
             [
                 InlineKeyboardButton(
                     'Spell Check',
