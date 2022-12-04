@@ -10,9 +10,10 @@ from info import ADMINS
 from traceback import format_exc
 from pyrogram import Client, filters
 from database.users_chats_db import db
-from utils import broadcast_messages, temp
 from pyrogram.errors import InputUserDeactivated, FloodWait, UserIsBlocked, PeerIdInvalid
 
+class temp(object):
+    broadcast_ids = {}
 
 @Client.on_message(filters.command("broadcast") & filters.user(ADMINS) & filters.private)
 async def send_broadcast(bot: Client, update):    
