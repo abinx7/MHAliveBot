@@ -33,6 +33,10 @@ DATABASE_URI = "mongodb+srv://tinson:tinson@cluster0.dbhxm.mongodb.net/myFirstDa
 DATABASE_NAME = "IMDBTINSONSIR"
 COLLECTION_NAME = "Telegram_files"
 
+DATABASE_URI_2 = ""
+DATABASE_NAME_2 = ""
+COLLECTION_NAME_2 = ""
+
 # Others
 LOG_CHANNEL = int(-1001679384751)
 SUPPORT_CHAT = "TinsonTs"
