@@ -570,9 +570,9 @@ async def auto_filter(client, msg):
         else:
              return            
     if settings["button"]:
-        btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", callback_data=f'{pre}#{file.file_id}')], for file in files ]               
+        btn = [[InlineKeyboardButton(text=f"[{get_size(file.file_size)}] {file.file_name}", callback_data=f'{pre}#{file.file_id}')] for file in files ]               
     else:
-        btn = [[InlineKeyboardButton(text=f"{file.file_name}", callback_data=f'{pre}#{file.file_id}'), InlineKeyboardButton(text=f"[{get_size(file.file_size)}]", callback_data=f'{pre}#{file.file_id}')], for file in files ]                 
+        btn = [[InlineKeyboardButton(text=f"{file.file_name}", callback_data=f'{pre}#{file.file_id}'), InlineKeyboardButton(text=f"[{get_size(file.file_size)}]", callback_data=f'{pre}#{file.file_id}')] for file in files ]                 
                                
     if offset != "":
         key = f"{message.chat.id}-{message.id}"
