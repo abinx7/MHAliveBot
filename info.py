@@ -15,11 +15,10 @@ AUTH_CHANNEL = int(-1001870323556)
 
 # MongoDB information
 DATABASE_URI = "mongodb+srv://tinson:tinson@cluster0.x6pcf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-DATABASE_NAME = "IMDB1"
-COLLECTION_NAME = "Telegram_files"
+DATABASE_NAME = "LuciferMoringstar_Robot"
 
 DATABASE_URI_2 = "mongodb+srv://tinson:tinson@cluster0.2flr9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-DATABASE_NAME_2 = "IMDB2"
+DATABASE_NAME_2 = "LuciferMoringstar_Robot"
 COLLECTION_NAME_2 = "Telegram_files"
 
 # Others
@@ -34,3 +33,6 @@ Join ⚡️
 <a href=https://t.me/TinsonTs>[CONFERENCE HALL]</a>"""
 
 SPELL_CHECK_REPLY = False
+
+
+
