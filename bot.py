@@ -3,7 +3,6 @@ from pyrogram.raw.all import layer
 from aiohttp import web
 from plugins import web_server
 from database.ia_filterdb import Media
-from database.users_chats_db import db
 from info import SESSION, API_ID, API_HASH, BOT_TOKEN
 from utils import temp
 from typing import Union, Optional, AsyncGenerator
@@ -13,32 +12,29 @@ class Bot(Client):
 
     def __init__(self):
         super().__init__(
-            name=SESSION,
+            name="TinSonBro",
             api_id=API_ID,
             api_hash=API_HASH,
             bot_token=BOT_TOKEN,
-            workers=500,
+            workers=300,
             plugins={"root": "plugins"},
             sleep_threshold=5,
         )
 
     async def start(self):
-        b_users, b_chats = await db.get_banned()
-        temp.BANNED_USERS = b_users
-        temp.BANNED_CHATS = b_chats
         await super().start()
         await Media.ensure_indexes()
         me = await self.get_me()
-        temp.ME = me.id
-        temp.U_NAME = me.username
-        temp.B_NAME = me.first_name
-        self.username = '@' + me.username
+        self.username = me.username 
+        self.id = me.id
+        self.name = me.first_name
+        self.mention = me.mention 
         app = web.AppRunner(await web_server())
         await app.setup()
         bind_address = "0.0.0.0"
         port = "8080"
         await web.TCPSite(app, bind_address, port).start()
-        print(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
+        print(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on @{me.username}.")
         
 
     async def stop(self, *args):
