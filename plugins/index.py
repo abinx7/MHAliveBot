@@ -7,12 +7,14 @@ from info import ADMINS
 from info import LOG_CHANNEL
 from database.ia_filterdb import save_file
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils import temp
 import re
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 lock = asyncio.Lock()
 
+class temp(object):
+    CANCEL = False 
+    CURRENT = int(2)
 
 @Client.on_callback_query(filters.regex(r'^index'))
 async def index_files(bot, query):
