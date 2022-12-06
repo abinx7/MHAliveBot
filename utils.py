@@ -1,5 +1,6 @@
+from pyrogram.errors import UserNotParticipant
 from info import AUTH_CHANNEL
-from pyrogram import enums
+from pyrogram import enums 
 from pyrogram.types import *
 
 async def is_subscribed(bot, query):
