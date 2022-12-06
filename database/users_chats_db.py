@@ -86,5 +86,7 @@ class Database:
         count = await self.col.count_documents({"notif": True})
         return count
 
+    async def get_db_size(self):
+        return (await self.db.command("dbstats"))['dataSize']
 
 db = Database(DATABASE_URI, DATABASE_NAME)
