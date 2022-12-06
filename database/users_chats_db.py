@@ -10,7 +10,7 @@ class Database:
 
     def new_user(self, id):
         return dict(
-            id=id,
+            id=int(id),
             join_date=datetime.date.today().isoformat(),
             notif=True,
             ban_status=dict(
