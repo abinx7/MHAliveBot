@@ -22,7 +22,7 @@ async def start(client, message):
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
     if len(message.command) != 2:
         buttons = [[
-            InlineKeyboardButton('➕ 𝐀𝐃𝐃 𝐌𝐄 𝐓𝐎 𝐘𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏 ➕', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
+            InlineKeyboardButton('➕ 𝐀𝐃𝐃 𝐌𝐄 𝐓𝐎 𝐘𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏 ➕', url=f'http://t.me/{client.username}?startgroup=true')
         ], [
             InlineKeyboardButton('⭕️ 𝐌𝐎𝐕𝐈𝐄𝐒', url='https://t.me/cinemapranthangroup'),
             InlineKeyboardButton('𝐒𝐄𝐑𝐈𝐄𝐒 ⭕️', url='https://t.me/cinemapranthangroup_s')
@@ -50,9 +50,8 @@ async def start(client, message):
         btn = [[InlineKeyboardButton("🤖 Join Updates Channel", url=invite_link.invite_link )]]                
         if message.command[1] != "subscribe":
             try:
-                kk, file_id = message.command[1].split("_", 1)
-                pre = 'checksubp' if kk == 'filep' else 'checksub' 
-                btn.append([InlineKeyboardButton(" 🔄 Try Again", callback_data=f"{pre}#{file_id}")])
+                kk, file_id = message.command[1].split("_", 1)               
+                btn.append([InlineKeyboardButton(" 🔄 Try Again", callback_data=f"checksub#{file_id}")])
             except (IndexError, ValueError):
                 btn.append([InlineKeyboardButton(" 🔄 Try Again", url=f"https://t.me/{client.username}?start={message.command[1]}")])
         await client.send_message(
