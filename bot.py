@@ -1,10 +1,8 @@
-from pyrogram import Client, __version__
-from pyrogram.raw.all import layer
+from pyrogram import Client
 from aiohttp import web
 from plugins import web_server
 from database.ia_filterdb import Media
-from info import SESSION, API_ID, API_HASH, BOT_TOKEN
-from utils import temp
+from info import API_ID, API_HASH, BOT_TOKEN
 from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 
@@ -32,9 +30,9 @@ class Bot(Client):
         app = web.AppRunner(await web_server())
         await app.setup()
         bind_address = "0.0.0.0"
-        port = "8080"
-        await web.TCPSite(app, bind_address, port).start()
-        print(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on @{me.username}.")
+        PORT = "8080"
+        await web.TCPSite(app, bind_address, PORT).start()
+        print(f"@{me.username}... IS STARTED ⚡️⚡️")
         
 
     async def stop(self, *args):
