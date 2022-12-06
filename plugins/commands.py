@@ -9,35 +9,16 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from database.ia_filterdb import Media, get_file_details, unpack_new_file_id
 from database.users_chats_db import db
 from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, CUSTOM_FILE_CAPTION
-from utils import get_settings, get_size, is_subscribed, save_group_settings, temp
-from database.connections_mdb import active_connection
+from utils import get_size, is_subscribed
 import re
-import json
-import base64
+
 logger = logging.getLogger(__name__)
 
 
 @Client.on_message(filters.command("start") & filters.incoming)
-async def start(client, message):
-    if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        buttons = [
-            [
-                InlineKeyboardButton('📥 𝐌𝐎𝐕𝐈𝐄𝐒 📥', url='https://t.me/cinemapranthangroup')
-            ],
-            [
-                InlineKeyboardButton('ℹ️ 𝐇𝐄𝐋𝐏', url=f"https://t.me/{temp.U_NAME}?start=help"),
-            ]
-            ]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await message.reply(script.START_TXT.format(message.from_user.mention if message.from_user else message.chat.title, temp.U_NAME, temp.B_NAME), reply_markup=reply_markup)
-        await asyncio.sleep(2) # 😢 https://github.com/EvamariaTG/EvaMaria/blob/master/plugins/p_ttishow.py#L17 😬 wait a bit, before checking.
-        if not await db.get_chat(message.chat.id):
-            total=await client.get_chat_members_count(message.chat.id)
-            await client.send_message(LOG_CHANNEL, script.LOG_TEXT_G.format(message.chat.title, message.chat.id, total, "Unknown"))       
-            await db.add_chat(message.chat.id, message.chat.title)
-        return 
+async def start(client, message):    
     if not await db.is_user_exist(message.from_user.id):
-        await db.add_user(message.from_user.id, message.from_user.first_name)
+        await db.add_user(message.from_user.id)
         await client.send_message(LOG_CHANNEL, script.LOG_TEXT_P.format(message.from_user.id, message.from_user.mention))
     if len(message.command) != 2:
         buttons = [[
@@ -55,7 +36,7 @@ async def start(client, message):
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
             photo=random.choice(PICS),
-            caption=script.START_TXT.format(message.from_user.mention, temp.U_NAME, temp.B_NAME),
+            caption=script.START_TXT.format(message.from_user.mention, client.mention),
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
@@ -66,101 +47,41 @@ async def start(client, message):
         except ChatAdminRequired:
             logger.error("Make sure Bot is admin in Forcesub channel")
             return
-        btn = [
-            [
-                InlineKeyboardButton(
-                    "🤖 Join Updates Channel", url=invite_link.invite_link
-                )
-            ]
-        ]
-
+        btn = [[InlineKeyboardButton("🤖 Join Updates Channel", url=invite_link.invite_link )]]                
         if message.command[1] != "subscribe":
             try:
                 kk, file_id = message.command[1].split("_", 1)
                 pre = 'checksubp' if kk == 'filep' else 'checksub' 
                 btn.append([InlineKeyboardButton(" 🔄 Try Again", callback_data=f"{pre}#{file_id}")])
             except (IndexError, ValueError):
-                btn.append([InlineKeyboardButton(" 🔄 Try Again", url=f"https://t.me/{temp.U_NAME}?start={message.command[1]}")])
+                btn.append([InlineKeyboardButton(" 🔄 Try Again", url=f"https://t.me/{client.username}?start={message.command[1]}")])
         await client.send_message(
             chat_id=message.from_user.id,
             text="👇 JOIN MY UPDATES CHANNEL AND CLICK 🔄 𝐓𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 TO GET MOVIE 👇 മൂവി ഫയൽ ലഭിക്കാൻ എന്റെ അപ്‌ഡേറ്റ് ചാനലിൽ ചേർന്ന് ശേഷം 🔄 𝐓𝐫𝐲 𝐚𝐠𝐚𝐢𝐧 അമർത്തുക 👇",
             reply_markup=InlineKeyboardMarkup(btn),
             parse_mode=enums.ParseMode.MARKDOWN
             )
-        return
-    if len(message.command) == 2 and message.command[1] in ["subscribe", "error", "SUBSCRIBE ചെയ്യൂ മൂത്ത😊", "help"]:
-        buttons = [[
-            InlineKeyboardButton('➕ 𝐀𝐃𝐃 𝐌𝐄 𝐓𝐎 𝐘𝐎𝐔𝐑 𝐆𝐑𝐎𝐔𝐏 ➕', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
-        ], [
-            InlineKeyboardButton('⭕️ 𝐌𝐎𝐕𝐈𝐄𝐒', url='https://t.me/cinemapranthangroup'),
-            InlineKeyboardButton('𝐒𝐄𝐑𝐈𝐄𝐒 ⭕️', url='https://t.me/cinemapranthangroup_s')
-        ], [
-            InlineKeyboardButton('⭕️ 𝐂𝐇𝐀𝐍𝐍𝐄𝐋', url='https://t.me/TinsonTs'),
-            InlineKeyboardButton('𝐆𝐑𝐎𝐔𝐏 ⭕️', url='https://t.me/cinemapranthangroup')
-        ], [
-            InlineKeyboardButton('⭕️ 𝐇𝐄𝐋𝐏', callback_data='help'),
-            InlineKeyboardButton('𝐀𝐁𝐎𝐔𝐓 ⭕️', callback_data='about')
-        ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await message.reply_photo(
-            photo=random.choice(PICS),
-            caption=script.START_TXT.format(message.from_user.mention, temp.U_NAME, temp.B_NAME),
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
-        return
+        return    
     data = message.command[1]
-    try:
-        pre, file_id = data.split('_', 1)
-    except:
-        file_id = data
-        pre = ""
-    
-    files_ = await get_file_details(file_id)           
-    if not files_:
-        pre, file_id = ((base64.urlsafe_b64decode(data + "=" * (-len(data) % 4))).decode("ascii")).split("_", 1)
-        try:
-            msg = await client.send_cached_media(
-                chat_id=message.from_user.id,
-                file_id=file_id,
-                protect_content=True if pre == 'filep' else False,
-                )
-            filetype = msg.media
-            file = getattr(msg, filetype.value)
-            title = file.file_name
-            size=get_size(file.file_size)
-            f_caption = f"<code>{title}</code>"
-            if CUSTOM_FILE_CAPTION:
-                try:
-                    f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='')
-                except:
-                    return
-            await msg.edit_caption(f_caption)
-            return
-        except:
-            pass
+    pre, file_id = data.split('_', 1)   
+    files_ = await get_file_details(file_id)
+    if not files_:            
         return await message.reply('No such file exist.')
     files = files_[0]
     title = files.file_name
     size=get_size(files.file_size)
-    f_caption=files.caption
-    if CUSTOM_FILE_CAPTION:
-        try:
-            f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)
-        except Exception as e:
-            logger.exception(e)
-            f_caption=f_caption
-    if f_caption is None:
-        f_caption = f"{files.file_name}"
     try:
-        await client.send_cached_media(chat_id=message.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if pre == 'filep' else False,)
+        f_caption=CUSTOM_FILE_CAPTION.format(file_name= '' if title is None else title, file_size='' if size is None else size)        
+    except:
+        f_caption=f"{title}"
+    try:
+        await client.send_cached_media(chat_id=message.from_user.id, file_id=file_id, caption=f_caption)
     except Exception as e:
         await client.send_cached_media(chat_id=message.from_user.id, text=f"{e}")       
 
 
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
-    """Send log file"""
     try:
         await message.reply_document('TelegramBot.log')
     except Exception as e:
@@ -242,108 +163,4 @@ async def delete_all_index_confirm(bot, message):
     await Media.collection.drop()
     await message.answer('°°°°°')
     await message.message.edit('Succesfully Deleted All The Indexed Files.')
-
-
-@Client.on_message(filters.command('settings'))
-async def settings(client, message):
-    userid = message.from_user.id if message.from_user else None
-    if not userid:
-        return await message.reply(f"You are anonymous admin. Use /connect {message.chat.id} in PM")
-    chat_type = message.chat.type
-
-    if chat_type == enums.ChatType.PRIVATE:
-        grpid = await active_connection(str(userid))
-        if grpid is not None:
-            grp_id = grpid
-            try:
-                chat = await client.get_chat(grpid)
-                title = chat.title
-            except:
-                await message.reply_text("Make sure I'm present in your group!!", quote=True)
-                return
-        else:
-            await message.reply_text("I'm not connected to any groups!", quote=True)
-            return
-
-    elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        grp_id = message.chat.id
-        title = message.chat.title
-
-    else:
-        return
-
-    st = await client.get_chat_member(grp_id, userid)
-    if (
-            st.status != enums.ChatMemberStatus.ADMINISTRATOR
-            and st.status != enums.ChatMemberStatus.OWNER
-            and str(userid) not in ADMINS
-    ):
-        return
-
-    settings = await get_settings(grp_id)
-
-    if settings is not None:
-        buttons = [
-            [
-                InlineKeyboardButton(
-                    'Filter Button',
-                    callback_data=f'setgs#button#{settings["button"]}#{grp_id}',
-                ),
-                InlineKeyboardButton(
-                    'Single' if settings["button"] else 'Double',
-                    callback_data=f'setgs#button#{settings["button"]}#{grp_id}',
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    'Bot PM',
-                    callback_data=f'setgs#botpm#{settings["botpm"]}#{grp_id}',
-                ),
-                InlineKeyboardButton(
-                    '✅ Yes' if settings["botpm"] else '❌ No',
-                    callback_data=f'setgs#botpm#{settings["botpm"]}#{grp_id}',
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    'File Secure',
-                    callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',
-                ),
-                InlineKeyboardButton(
-                    '✅ Yes' if settings["file_secure"] else '❌ No',
-                    callback_data=f'setgs#file_secure#{settings["file_secure"]}#{grp_id}',
-                ),
-            ],            
-            [
-                InlineKeyboardButton(
-                    'Spell Check',
-                    callback_data=f'setgs#spell_check#{settings["spell_check"]}#{grp_id}',
-                ),
-                InlineKeyboardButton(
-                    '✅ Yes' if settings["spell_check"] else '❌ No',
-                    callback_data=f'setgs#spell_check#{settings["spell_check"]}#{grp_id}',
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    'Welcome',
-                    callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',
-                ),
-                InlineKeyboardButton(
-                    '✅ Yes' if settings["welcome"] else '❌ No',
-                    callback_data=f'setgs#welcome#{settings["welcome"]}#{grp_id}',
-                ),
-            ],
-        ]
-
-        reply_markup = InlineKeyboardMarkup(buttons)
-
-        await message.reply_text(
-            text=f"<b>Change Your Settings for {title} As Your Wish ⚙</b>",
-            reply_markup=reply_markup,
-            disable_web_page_preview=True,
-            parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=message.id
-        )
-
 
