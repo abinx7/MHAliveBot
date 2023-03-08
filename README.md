@@ -9,21 +9,7 @@ Vazha marathinte code kang cheythathum poranjitt avare kaliyakkiyavar and high c
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+DEPLOY TO HEROKU 
 
 <details><summary>Deploy To Heroku</summary>
 <p>
@@ -33,3 +19,12 @@ Vazha marathinte code kang cheythathum poranjitt avare kaliyakkiyavar and high c
 </a>
 </p>
 </details>
+
+
+
+
+
+
+
+
+
