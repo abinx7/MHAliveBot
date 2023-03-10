@@ -1,7 +1,7 @@
 # Bot information
 API_ID = int(7538843)
 API_HASH = "9c1f4ab1c1db2ebdb18d48e4257d2074"
-BOT_TOKEN = "2077834181:AAFUUxI5vtSg1YXte-xJlzzTKuD4_k2-s_0"
+BOT_TOKEN = "6014010459:AAG9jcs0r7h22HqsEjbPAvVhkSlt3QcMNag"
 
 # Bot settings
 USE_CAPTION_FILTER = True 
